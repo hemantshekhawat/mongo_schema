@@ -12,7 +12,7 @@ class Schema(object):
     DEFAULT_MONGO_URI = 'mongodb://localhost:27017/'
     DEFAULT_PORT = 27017
 
-    def __init__(self, db_name, collection_name, where_dict={}, limit=0, mongo_uri=DEFAULT_MONGO_URI, host=None, port=None):
+    def __init__(self, db_name, collection_name, where_dict={}, limit=0, mongo_uri=DEFAULT_MONGO_URI, host=None, port=None, username=None, password=None):
         """
                 Initializes Mongo Credentials given by user
 
@@ -30,6 +30,14 @@ class Schema(object):
 
                 :param limit: Number of docs to be sampled
                 :type  limit: int
+                
+                :param username: username for authentication
+                :type  limit: String
+
+                :param username: password for authentication
+                :type  limit: String
+
+
 
         """
 
@@ -40,6 +48,8 @@ class Schema(object):
         self.mongo_uri = mongo_uri
         self.host = host
         self.port = port
+        self.username = username
+        self.password = password
 
     def get_mongo_cursor(self):
         """
@@ -60,6 +70,10 @@ class Schema(object):
                 client = MongoClient(self.mongo_uri)
 
             db = client[self.db_name]
+
+            if self.username and self.password:
+                db.authenticate(name=self.username, password=self.password)
+            
             cursor = db[self.collection]
 
             return cursor
